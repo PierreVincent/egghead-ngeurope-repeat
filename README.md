@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 Runs a "Board Game" server with a SQLite database and board game images.
 The angular "app" is a minimal example of requesting the data.
 
@@ -14,7 +13,3 @@ During the workshop, we'll start from scratch and refactor as we go along, but w
 ```
 optional: 'gulp watch' will watch the 'src' and build into a 'dist' directory
 ```
-=======
-egghead-ngeurope-repeat
-=======================
->>>>>>> 9845274db6dca6fac995c253ab3d9ea109aeefef

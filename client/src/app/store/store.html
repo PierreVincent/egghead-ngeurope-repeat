@@ -1,21 +1,108 @@
-<div>
-  <input type="text" ng-model="game.search" ng-model-options="{debounce:500}"/>
-  <table class="table table-bordered">
-    <thead>
-    <tr>
-      <th ng-click="store.select('name')">Game</th>
-      <th ng-click="store.select('averageRating')">Rating</th>
-      <th>Thumbnail</th>
-    </tr>
-    </thead>
+<style>
+    .repeated-item.ng-enter, .repeated-item.ng-move {
+        -webkit-transition:0.5s linear all;
+        -moz-transition:0.5s linear all;
+        -o-transition:0.5s linear all;
+        transition:0.5s linear all;
+        opacity:0;
+    }
+    .repeated-item.ng-enter.ng-enter-active,
+    .repeated-item.ng-move.ng-move-active {
+        opacity:1;
+    }
+    .repeated-item.ng-leave {
+        -webkit-animation:0.5s my_animation;
+        -moz-animation:0.5s my_animation;
+        -o-animation:0.5s my_animation;
+        animation:0.5s my_animation;
+    }
+</style>
 
-    <tbody>
-    <tr ng-repeat="game in store.games | orderBy: store.selected | filter: game.search"
-        ui-sref="detail({id:game.gameId})">
-      <td>{{::game.name}}</td>
-      <td>{{::game.averageRating}}</td>
-      <td><img ng-src="{{::store.BASE_URL}}/{{::game.thumbnail}}" alt=""/></td>
-    </tr>
-    </tbody>
-  </table>
+<div class="row">
+    <div class="col-md-3 col-md-offset-1">
+        <h2>Filter options</h2>
+        Game name: <input type="text" ng-model="store.search.name" ng-model-options="{debounce:500}"/>
+
+        <br/><br/>
+
+        Minimum Rating: <select ng-model="store.minRating">
+        <option value="0">All</option>
+        <option value="10">10</option>
+        <option value="9">9</option>
+        <option value="8">8</option>
+        <option value="7">7</option>
+        <option value="6">6</option>
+        <option value="5">5</option>
+        <option value="4">4</option>
+        <option value="3">3</option>
+        <option value="2">2</option>
+        <option value="1">1</option>
+    </select>
+
+        <br/><br/>
+
+        Number of Players: <select ng-model="store.numberPlayers">
+        <option value="any">Any</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
+
+        <br/><br/>
+
+        Playtime: <select ng-model="store.playtime">
+        <option value="any">Any</option>
+        <option value="short">Short</option>
+        <option value="average">Average</option>
+        <option value="long">Long</option>
+        <option value="hardcore">All nighter</option>
+    </select>
+
+        <br/><br/>
+
+        <input type="checkbox" ng-model="store.includeExpansions"/> Include expansions
+    </div>
+    <div class="col-md-6">
+        <h2>Games</h2>
+
+        <div class="alert alert-info">
+            <ng-pluralize count="filteredGames.length"
+                          when="{'0': 'No games found.',
+                                'one': '1 game found',
+                                'other': '{} games found'}">
+            </ng-pluralize>
+        </div>
+
+        <div ng-hide="filteredGames.length == 0">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th ng-click="store.select('name')">Game</th>
+                    <th ng-click="store.select('averageRating')">Rating</th>
+                    <th>Thumbnail</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="repeated-item" ng-repeat="game in filteredGames =
+                    (store.games
+                    | orderBy: store.selected
+                    | filter: store.search
+                    | filterMinRating: store.minRating
+                    | filterExpansions: store.includeExpansions
+                    | filterPlaytime: store.playtime
+                    | filterNumberPlayers: store.numberPlayers)"
+                    ui-sref="detail({id:game.gameId})">
+                    <td>{{::game.name}}</td>
+                    <td>{{::game.averageRating}}</td>
+                    <td><img ng-src="{{::store.BASE_URL}}/{{::game.thumbnail}}" alt=""/></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
+
